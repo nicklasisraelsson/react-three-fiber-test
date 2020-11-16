@@ -5,6 +5,7 @@
  */
 
 module.exports = {
+  pathPrefix: '/react-three-fiber-test',
   /* Your site config here */
   plugins: ['gatsby-plugin-typescript', 'gatsby-plugin-sass'],
 };
