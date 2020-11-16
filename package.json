@@ -50,12 +50,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hdorgeval/gatsby-starter-ts-hello-world.git"
+    "url": "git+https://github.com/nicklasisraelsson/react-three-fiber-test.git"
   },
-  "author": "Henri d'Orgeval",
+  "author": "Nicklas Israelsson",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/hdorgeval/gatsby-starter-ts-hello-world/issues"
-  },
-  "homepage": "https://github.com/hdorgeval/gatsby-starter-ts-hello-world#readme"
+  "homepage": "https://github.com/nicklasisraelsson/react-three-fiber-test#readme"
 }
