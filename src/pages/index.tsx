@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Canvas, MeshProps, useFrame, Vector3 } from 'react-three-fiber';
+import { Canvas, MeshProps, useFrame } from 'react-three-fiber';
 import {
   Physics,
   usePlane,
@@ -8,6 +8,8 @@ import {
   BoxProps,
   SphereProps,
   useSphere,
+  // For some reason eslint is unable to find the cannon package?
+  // eslint-disable-next-line import/no-unresolved
 } from '@react-three/cannon';
 import * as THREE from 'three';
 

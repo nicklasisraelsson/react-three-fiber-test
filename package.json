@@ -22,7 +22,6 @@
   "dependencies": {
     "@hot-loader/react-dom": "17.0.0",
     "@react-three/cannon": "0.5.3",
-    "@react-three/drei": "2.2.7",
     "@types/react": "16.9.56",
     "@types/react-dom": "16.9.9",
     "gatsby": "2.15.12",
