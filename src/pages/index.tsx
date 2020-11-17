@@ -1,32 +1,71 @@
 import React, { useRef, useState } from 'react';
 import { Canvas, MeshProps, useFrame, Vector3 } from 'react-three-fiber';
+import {
+  Physics,
+  usePlane,
+  useBox,
+  PlaneProps,
+  BoxProps,
+  SphereProps,
+  useSphere,
+} from '@react-three/cannon';
 import * as THREE from 'three';
 
 import './styles.scss';
 
-const Box = (props: MeshProps) => {
-  const boxRef = useRef<THREE.Mesh>();
-  // Set up state for the hovered and active state
-  const [hovered, setHover] = useState(false);
-  const [active, setActive] = useState(false);
+const Box = (props: BoxProps) => {
+  const [boxRef] = useBox(() => ({
+    mass: 1,
+    rotation: [0.4, 0.2, 0.5],
+    ...props,
+  }));
 
-  // Rotate mesh every frame, this is outside of React without overhead
-  useFrame(() => {
-    if (!boxRef.current) return;
+  return (
+    <mesh ref={boxRef} castShadow receiveShadow>
+      <boxBufferGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial color="orange" />
+    </mesh>
+  );
+};
 
-    boxRef.current.rotation.x = boxRef.current.rotation.y += 0.05;
+const Boxes = ({ boxPositions }: { boxPositions: number[][] }) => {
+  return (
+    <>
+      {boxPositions.map((position, index) => (
+        <Box key={index} position={position} />
+      ))}
+    </>
+  );
+};
+const planeDistance = -15;
+
+const Plane = (props: PlaneProps) => {
+  const [planeRef] = usePlane(() => ({ position: [0, 0, planeDistance], ...props }));
+  return (
+    <mesh ref={planeRef} receiveShadow>
+      <planeBufferGeometry attach="geometry" args={[1000, 1000]} />
+      <shadowMaterial attach="material" color="#171717" opacity={0.5} />
+    </mesh>
+  );
+};
+
+const TargetBall = (props: SphereProps) => {
+  const [ballRef, ballApi] = useSphere(() => ({
+    mass: 1.5,
+    isKinematic: true,
+    ...props,
+  }));
+
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime();
+    ballApi.position.set(Math.sin(t * 3) * 5, Math.cos(t * 3) * 5, planeDistance + 1);
+    ballApi.rotation.set(Math.sin(t * 6), Math.cos(t * 6), 0);
   });
 
   return (
-    <mesh
-      {...props}
-      ref={boxRef}
-      onClick={() => setActive(!active)}
-      onPointerOver={() => setHover(true)}
-      onPointerOut={() => setHover(false)}
-    >
-      <boxBufferGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
+    <mesh ref={ballRef} receiveShadow castShadow>
+      <sphereBufferGeometry args={[1.5]} />
+      <meshStandardMaterial color="green" />
     </mesh>
   );
 };
@@ -63,36 +102,34 @@ const MouseBox = ({ onMouseBoxClicked, ...rest }: MouseBoxProps) => {
   );
 };
 
-const Boxes = ({ boxPositions }: { boxPositions: Vector3[] }) => {
-  return (
-    <>
-      {boxPositions.map((position, index) => (
-        <Box key={index} position={position} />
-      ))}
-    </>
-  );
-};
-
 export default () => {
-  const [boxPositions, setBoxPositions] = useState<Vector3[]>([]);
+  const [boxPositions, setBoxPositions] = useState<number[][]>([]);
 
   const addBox = (boxPosition: BoxPosition) => {
     setBoxPositions([...boxPositions, [boxPosition.x, boxPosition.y, 0]]);
   };
 
   return (
-    <Canvas>
+    <Canvas
+      shadowMap
+      onCreated={({ scene }) => {
+        scene.background = new THREE.Color('lightblue');
+      }}
+    >
       <ambientLight />
-      <pointLight position={[10, 10, 10]} />
+      <pointLight position={[10, 10, 10]} castShadow />
 
       <MouseBox
         onMouseBoxClicked={(boxPosition) => {
           addBox(boxPosition);
         }}
-        position={[0, 0, 0]}
       />
 
-      <Boxes boxPositions={boxPositions} />
+      <Physics gravity={[0, 0, -30]}>
+        <Plane />
+        <TargetBall />
+        <Boxes boxPositions={boxPositions} />
+      </Physics>
     </Canvas>
   );
 };
