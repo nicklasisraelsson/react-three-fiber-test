@@ -1,3 +1,5 @@
+import { PlaneDistance } from '../util/constants';
+import TargetBall from '../components/TargetBall';
 import React, { useRef, useState } from 'react';
 import { Canvas, MeshProps, useFrame } from 'react-three-fiber';
 import {
@@ -6,15 +8,12 @@ import {
   useBox,
   PlaneProps,
   BoxProps,
-  SphereProps,
-  useSphere,
   // For some reason eslint is unable to find the cannon package?
   // eslint-disable-next-line import/no-unresolved
 } from '@react-three/cannon';
 import * as THREE from 'three';
 
 import './styles.scss';
-
 const Box = (props: BoxProps) => {
   const [boxRef] = useBox(() => ({
     mass: 1,
@@ -39,35 +38,13 @@ const Boxes = ({ boxPositions }: { boxPositions: number[][] }) => {
     </>
   );
 };
-const planeDistance = -15;
 
 const Plane = (props: PlaneProps) => {
-  const [planeRef] = usePlane(() => ({ position: [0, 0, planeDistance], ...props }));
+  const [planeRef] = usePlane(() => ({ position: [0, 0, PlaneDistance], ...props }));
   return (
     <mesh ref={planeRef} receiveShadow>
       <planeBufferGeometry attach="geometry" args={[1000, 1000]} />
       <shadowMaterial attach="material" color="#171717" opacity={0.5} />
-    </mesh>
-  );
-};
-
-const TargetBall = (props: SphereProps) => {
-  const [ballRef, ballApi] = useSphere(() => ({
-    mass: 1.5,
-    isKinematic: true,
-    ...props,
-  }));
-
-  useFrame((state) => {
-    const t = state.clock.getElapsedTime();
-    ballApi.position.set(Math.sin(t * 3) * 5, Math.cos(t * 3) * 5, planeDistance + 1);
-    ballApi.rotation.set(Math.sin(t * 6), Math.cos(t * 6), 0);
-  });
-
-  return (
-    <mesh ref={ballRef} receiveShadow castShadow>
-      <sphereBufferGeometry args={[1.5]} />
-      <meshStandardMaterial color="green" />
     </mesh>
   );
 };
@@ -121,11 +98,7 @@ export default () => {
       <ambientLight />
       <pointLight position={[10, 10, 10]} castShadow />
 
-      <MouseBox
-        onMouseBoxClicked={(boxPosition) => {
-          addBox(boxPosition);
-        }}
-      />
+      <MouseBox onMouseBoxClicked={addBox} />
 
       <Physics gravity={[0, 0, -30]}>
         <Plane />
