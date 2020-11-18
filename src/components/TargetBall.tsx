@@ -3,6 +3,8 @@ import { SphereProps, useSphere } from '@react-three/cannon/dist';
 import React from 'react';
 import { useFrame } from 'react-three-fiber';
 
+const BallRadius = 1.5;
+
 export default (props: SphereProps) => {
   const [ballRef, ballApi] = useSphere(() => ({
     mass: 1.5,
@@ -18,7 +20,7 @@ export default (props: SphereProps) => {
 
   return (
     <mesh ref={ballRef} receiveShadow castShadow>
-      <sphereBufferGeometry args={[1.5]} />
+      <sphereBufferGeometry args={[BallRadius]} />
       <meshStandardMaterial color="green" />
     </mesh>
   );

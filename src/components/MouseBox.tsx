@@ -1,5 +1,6 @@
 import React, { useRef } from 'react';
 import { MeshProps, useFrame } from 'react-three-fiber';
+import { Mesh } from 'three';
 
 export interface BoxPosition {
   x: number;
@@ -11,7 +12,7 @@ export interface MouseBoxProps extends MeshProps {
 }
 
 export default ({ onMouseBoxClicked, ...rest }: MouseBoxProps) => {
-  const boxRef = useRef<THREE.Mesh>();
+  const boxRef = useRef<Mesh>();
 
   useFrame(({ mouse }) => {
     if (!boxRef.current) return;
