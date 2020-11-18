@@ -1,7 +1,8 @@
 import { PlaneDistance } from '../util/constants';
 import TargetBall from '../components/TargetBall';
-import React, { useRef, useState } from 'react';
-import { Canvas, MeshProps, useFrame } from 'react-three-fiber';
+import MouseBox, { BoxPosition } from '../components/MouseBox';
+import React, { useState } from 'react';
+import { Canvas } from 'react-three-fiber';
 import {
   Physics,
   usePlane,
@@ -14,6 +15,7 @@ import {
 import * as THREE from 'three';
 
 import './styles.scss';
+
 const Box = (props: BoxProps) => {
   const [boxRef] = useBox(() => ({
     mass: 1,
@@ -45,38 +47,6 @@ const Plane = (props: PlaneProps) => {
     <mesh ref={planeRef} receiveShadow>
       <planeBufferGeometry attach="geometry" args={[1000, 1000]} />
       <shadowMaterial attach="material" color="#171717" opacity={0.5} />
-    </mesh>
-  );
-};
-
-interface BoxPosition {
-  x: number;
-  y: number;
-}
-interface MouseBoxProps extends MeshProps {
-  onMouseBoxClicked: (boxPosition: BoxPosition) => void;
-}
-
-const MouseBox = ({ onMouseBoxClicked, ...rest }: MouseBoxProps) => {
-  const boxRef = useRef<THREE.Mesh>();
-
-  useFrame(({ mouse }) => {
-    if (!boxRef.current) return;
-    boxRef.current.position.x = mouse.x * 7.5;
-    boxRef.current.position.y = mouse.y * 3;
-  });
-
-  return (
-    <mesh
-      onClick={() => {
-        if (!boxRef.current) return;
-        onMouseBoxClicked({ x: boxRef.current.position.x, y: boxRef.current.position.y });
-      }}
-      {...rest}
-      ref={boxRef}
-    >
-      <boxBufferGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="hotpink" />
     </mesh>
   );
 };

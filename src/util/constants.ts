@@ -1,1 +1,1 @@
-export const PlaneDistance = 15;
+export const PlaneDistance = -15;
